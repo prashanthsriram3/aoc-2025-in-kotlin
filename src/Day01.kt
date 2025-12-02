@@ -1,20 +1,39 @@
+enum class Direction {
+    L, R
+}
+
 fun main() {
-    fun part1(input: List<String>): Int {
-        return input.size
+    fun getNewPosition(direction: Direction, rotation: Int, position: Int): Int {
+        return when(direction) {
+            Direction.L -> position - rotation
+            Direction.R -> position + rotation
+        }
     }
 
-    fun part2(input: List<String>): Int {
-        return input.size
-    }
+    fun part1(input: List<String>): Int =
+        input.map { it[0].toString() to it.substring(1).toInt() }
+            .fold(0 to 50) { acc, (direction, rotation) ->
+                val (countZeros, position) = acc
+                val newPositionModulo100 = getNewPosition(Direction.valueOf(direction), rotation, position).mod(100)
+                val newCountZeros = if (newPositionModulo100 == 0) countZeros + 1 else countZeros
+                newCountZeros to newPositionModulo100
+            }
+            .first
 
-    // Test if implementation meets criteria from the description, like:
-    check(part1(listOf("test_input")) == 1)
+    fun part2(input: List<String>): Int =
+        input.map { it[0].toString() to it.substring(1).toInt() }
+            .fold(0 to 50) { acc, (direction, rotation) ->
+                val (countZeros, position) = acc
+                val newPosition = getNewPosition(Direction.valueOf(direction), rotation % 100, position)
+                val newCountZeros = if (newPosition == 0 || (position != 0 && newPosition !in 1..99)) countZeros + 1 else countZeros
+                (newCountZeros + (rotation / 100)) to newPosition.mod(100)
+            }
+            .first
 
-    // Or read a large test input from the `src/Day01_test.txt` file:
     val testInput = readInput("Day01_test")
-    check(part1(testInput) == 1)
+    check(part1(testInput) == 3)
+    check(part2(testInput) == 6)
 
-    // Read the input from the `src/Day01.txt` file.
     val input = readInput("Day01")
     part1(input).println()
     part2(input).println()

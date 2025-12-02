@@ -4,7 +4,7 @@ enum class Direction {
 
 fun main() {
     fun getNewPosition(direction: Direction, rotation: Int, position: Int): Int {
-        return when(direction) {
+        return when (direction) {
             Direction.L -> position - rotation
             Direction.R -> position + rotation
         }
@@ -25,7 +25,8 @@ fun main() {
             .fold(0 to 50) { acc, (direction, rotation) ->
                 val (countZeros, position) = acc
                 val newPosition = getNewPosition(Direction.valueOf(direction), rotation % 100, position)
-                val newCountZeros = if (newPosition == 0 || (position != 0 && newPosition !in 1..99)) countZeros + 1 else countZeros
+                val newCountZeros =
+                    if (newPosition == 0 || (position != 0 && newPosition !in 1..99)) countZeros + 1 else countZeros
                 (newCountZeros + (rotation / 100)) to newPosition.mod(100)
             }
             .first

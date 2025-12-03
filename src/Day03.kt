@@ -1,18 +1,11 @@
 fun main() {
-    fun maxForNumberOfDigits(line: String, noOfDigits: Int): Long {
-        val maxIndexes: MutableList<Int> = mutableListOf()
-        val maxValues: MutableList<Char> = mutableListOf()
-        val maxFirstIndexedValue = line.substring(0, line.length - noOfDigits + 1).withIndex().maxBy { it.value.digitToInt() }
-        maxIndexes.add(maxFirstIndexedValue.index)
-        maxValues.add(maxFirstIndexedValue.value)
-        (1..(noOfDigits - 1)).forEach { i ->
-            val maxNextIndexedValue = line.substring(maxIndexes[i - 1] + 1, line.length - noOfDigits + i + 1)
-                .withIndex().maxBy { it.value.digitToInt() }
-            maxIndexes.add(maxIndexes[i - 1] + 1 + maxNextIndexedValue.index)
-            maxValues.add(maxNextIndexedValue.value)
-        }
-        return maxValues.joinToString("").toLong()
-    }
+    fun maxForNumberOfDigits(line: String, noOfDigits: Int): Long =
+        (0..<noOfDigits).fold("" to -1) { acc, i ->
+            val maxNextIndexedValue =
+                line.substring(acc.second + 1, line.length - noOfDigits + i + 1)
+                    .withIndex().maxBy { it.value.digitToInt() }
+            acc.first + maxNextIndexedValue.value to (acc.second + 1 + maxNextIndexedValue.index)
+        }.first.toLong()
 
     fun part1(input: List<String>): Long =
         input.sumOf { maxForNumberOfDigits(it, 2) }

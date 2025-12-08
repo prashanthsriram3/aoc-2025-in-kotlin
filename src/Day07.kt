@@ -1,26 +1,37 @@
 fun main() {
-    fun part1(input: List<String>): Int {
-        val startingColumn = input[0].indexOfFirst { it == 'S' }
+    fun part1and2(input: List<String>): Pair<Int, Long> {
         var splits = 0
-        val beams = mutableSetOf(startingColumn)
-        (1 until input.size).forEach { rowIndex ->
-            val currentBeams = beams.toSet()
-            currentBeams.forEach { beam ->
-                if (input[rowIndex][beam] == '^') {
-                    beams.remove(beam)
-                    beams.addAll(setOf(beam - 1, beam + 1))
-                    splits += 1
+        val paths = mutableMapOf<Int, Long>()
+
+        input.forEach { line ->
+            line.forEachIndexed { i, c ->
+                when (c) {
+                    'S' -> {
+                        paths[i] = 1
+                    }
+                    '^' -> {
+                        if (paths.containsKey(i)) {
+                            val count = paths[i]!!
+                            splits += 1
+
+                            paths[i - 1] = (paths[i - 1] ?: 0) + count
+                            paths[i + 1] = (paths[i + 1] ?: 0) + count
+
+                            paths.remove(i)
+                        }
+                    }
                 }
             }
         }
-        return splits
+
+        return splits to paths.values.sum()
     }
 
     val testInput = readInput("Day07_test")
-    check(part1(testInput) == 21)
-//    check(part2(testInput) == 3263827L)
+    val (part1, part2) = part1and2(testInput)
+    check(part1 == 21)
+    check(part2 == 40L)
 
     val input = readInput("Day07")
-    part1(input).println()
-//    part2(input).println()
+    part1and2(input).println()
 }

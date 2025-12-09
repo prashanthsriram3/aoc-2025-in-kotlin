@@ -11,7 +11,10 @@ fun main() {
             line.split(",").map { it.toDouble() }.let { it[0] to it[1] }
         }
 
-    data class RectanglePairs(val p1: Pair<Double, Double>, val p2: Pair<Double, Double>, val rectangle: Polygon)
+    data class RectanglePairs(val p1: Pair<Double, Double>, val p2: Pair<Double, Double>, val rectangle: Polygon) {
+        fun area(): Long =
+            (abs(p1.first - p2.first) + 1).toLong() * (abs(p1.second - p2.second) + 1).toLong()
+    }
 
     fun rectangles(points: List<Pair<Double, Double>>): List<RectanglePairs> =
         points.flatMapIndexed { index, p1 ->
@@ -35,10 +38,7 @@ fun main() {
             }
 
     fun part1(input: List<String>): Long =
-        rectangles(parseInput(input)).maxBy { it.rectangle.area }
-            .let { (p1, p2) ->
-                (abs(p1.first - p2.first) + 1) * (abs(p1.second - p2.second) + 1)
-            }.toLong()
+        rectangles(parseInput(input)).maxOf { it.area() }
 
     fun part2(input: List<String>): Long =
         parseInput(input).let { points ->
@@ -49,9 +49,7 @@ fun main() {
             val rectanglePairs = rectangles(points)
             rectanglePairs.filter {
                 polygon.contains(it.rectangle)
-            }.maxBy { it.rectangle.area }.let { (p1, p2) ->
-                (abs(p1.first - p2.first) + 1) * (abs(p1.second - p2.second) + 1)
-            }.toLong()
+            }.maxOf { it.area() }
         }
 
     val testInput = readInput("Day09_test")
